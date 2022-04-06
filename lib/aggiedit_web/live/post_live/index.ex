@@ -5,8 +5,12 @@ defmodule AggieditWeb.PostLive.Index do
   alias Aggiedit.Rooms.Post
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, :posts, list_posts())}
+  def mount(_params, session, socket) do
+    socket = assign_socket_user(session, socket)
+    case socket.assigns do
+      %{:current_user => user} -> {:ok, assign(socket, :posts, list_posts())}
+      _ -> {:ok, socket |> put_flash(:error, "You must log in to access this page.") |> redirect(to: Routes.user_session_path(socket, :new))}
+    end
   end
 
   @impl true

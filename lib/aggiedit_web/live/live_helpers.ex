@@ -4,6 +4,9 @@ defmodule AggieditWeb.LiveHelpers do
 
   alias Phoenix.LiveView.JS
 
+  alias Aggiedit.Accounts
+  alias Aggiedit.Accounts.User
+
   @doc """
   Renders a live component inside a modal.
 
@@ -56,5 +59,14 @@ defmodule AggieditWeb.LiveHelpers do
     js
     |> JS.hide(to: "#modal", transition: "fade-out")
     |> JS.hide(to: "#modal-content", transition: "fade-out-scale")
+  end
+
+  def assign_socket_user(session, socket) do
+    with token when not is_nil(token) <- session["user_token"],
+         current_user=%User{} = Accounts.get_user_by_session_token(token) do
+      assign(socket, :current_user, current_user)
+    else
+      _ -> socket
+    end
   end
 end
