@@ -13,6 +13,7 @@ defmodule Aggiedit.Accounts.User do
     field :role, Ecto.Enum, values: [:user, :admin], default: :user
 
     belongs_to :room, Room, on_replace: :update
+    has_many :posts, Aggiedit.Rooms.Post
 
     timestamps()
   end

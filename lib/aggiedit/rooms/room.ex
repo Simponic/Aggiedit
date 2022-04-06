@@ -6,6 +6,7 @@ defmodule Aggiedit.Rooms.Room do
     field :domain, :string
 
     has_many :users, Aggiedit.Accounts.User
+    has_many :posts, Aggiedit.Rooms.Post
 
     timestamps()
   end
