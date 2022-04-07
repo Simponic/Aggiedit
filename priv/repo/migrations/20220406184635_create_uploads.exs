@@ -6,11 +6,10 @@ defmodule Aggiedit.Repo.Migrations.CreateUploads do
       add :file, :text
       add :mime, :text
       add :size, :integer
-      add :user_id, references(:users, on_delete: :nothing)
+
+      add :user_id, references(:users, on_delete: :delete_all)
 
       timestamps()
     end
-
-    create index(:uploads, [:user_id])
   end
 end

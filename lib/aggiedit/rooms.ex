@@ -140,41 +140,24 @@ defmodule Aggiedit.Rooms do
   """
   def get_post!(id), do: Repo.get!(Post, id)
 
-  @doc """
-  Creates a post.
-
-  ## Examples
-
-      iex> create_post(%{field: value})
-      {:ok, %Post{}}
-
-      iex> create_post(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_post(attrs \\ %{}) do
+  def create_post(attrs, after_save \\ &{:ok, &1}) do
     %Post{}
     |> Post.changeset(attrs)
     |> Repo.insert()
+    |> post_saved(after_save)
   end
 
-  @doc """
-  Updates a post.
-
-  ## Examples
-
-      iex> update_post(post, %{field: new_value})
-      {:ok, %Post{}}
-
-      iex> update_post(post, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_post(%Post{} = post, attrs) do
+  def update_post(%Post{} = post, attrs, after_save \\ &{:ok, &1}) do
     post
     |> Post.changeset(attrs)
     |> Repo.update()
+    |> post_saved(after_save)
   end
+
+  defp post_saved({:ok, post}, func) do
+    {:ok, _post} = func.(post)
+  end
+  defp post_saved(error, _fun), do: error
 
   @doc """
   Deletes a post.

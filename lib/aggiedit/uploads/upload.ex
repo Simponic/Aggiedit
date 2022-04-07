@@ -18,4 +18,9 @@ defmodule Aggiedit.Uploads.Upload do
     |> cast(attrs, [:file, :mime, :size])
     |> validate_required([:file, :mime, :size])
   end
+
+  def change_user(upload, user) do
+    change(upload)
+    |> put_assoc(:user, user)
+  end
 end

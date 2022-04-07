@@ -16,6 +16,16 @@
     <%= label f, :body %>
     <%= textarea f, :body %>
     <%= error_tag f, :body %>
+
+    <%= live_file_input @uploads.upload %>
+
+    <%= for upload <- @uploads.upload.entries do %>
+      <div class="row">
+        <div class="column">
+          <%= live_img_preview upload, height: 80 %>
+        </div>
+      </div>
+    <% end %>
   
     <div>
       <%= submit "Save", phx_disable_with: "Saving..." %>

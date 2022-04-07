@@ -3,6 +3,7 @@ defmodule AggieditWeb.PostLive.Index do
 
   alias Aggiedit.Rooms
   alias Aggiedit.Rooms.Post
+  alias Aggiedit.Repo
 
   @impl true
   def mount(_params, session, socket) do
@@ -25,9 +26,10 @@ defmodule AggieditWeb.PostLive.Index do
   end
 
   defp apply_action(socket, :new, _params) do
+    post = %Post{user_id: socket.assigns[:current_user].id}
     socket
     |> assign(:page_title, "New Post")
-    |> assign(:post, %Post{})
+    |> assign(:post, post)
   end
 
   defp apply_action(socket, :index, _params) do
