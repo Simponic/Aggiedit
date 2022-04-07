@@ -37,21 +37,11 @@ defmodule Aggiedit.Uploads do
   """
   def get_upload!(id), do: Repo.get!(Upload, id)
 
-  @doc """
-  Creates a upload.
-
-  ## Examples
-
-      iex> create_upload(%{field: value})
-      {:ok, %Upload{}}
-
-      iex> create_upload(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_upload(attrs \\ %{}) do
+  def create_upload(attrs, user) do
     %Upload{}
+    |> Repo.preload(:user)
     |> Upload.changeset(attrs)
+    |> Ecto.Changeset.put_assoc(:user, user)
     |> Repo.insert()
   end
 

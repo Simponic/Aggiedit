@@ -6,6 +6,7 @@ defmodule Aggiedit.Rooms do
   import Ecto.Query, warn: false
   alias Aggiedit.Repo
 
+  alias Aggiedit.Accounts
   alias Aggiedit.Rooms.Room
 
   @doc """
@@ -140,9 +141,14 @@ defmodule Aggiedit.Rooms do
   """
   def get_post!(id), do: Repo.get!(Post, id)
 
-  def create_post(attrs, after_save \\ &{:ok, &1}) do
+  def create_post(attrs, user, after_save \\ &{:ok, &1}) do
+    user = Repo.preload(user, :room)
+
     %Post{}
+    |> Repo.preload([:user, :room])
     |> Post.changeset(attrs)
+    |> Ecto.Changeset.put_assoc(:user, user)
+    |> Ecto.Changeset.put_assoc(:room, user.room)
     |> Repo.insert()
     |> post_saved(after_save)
   end

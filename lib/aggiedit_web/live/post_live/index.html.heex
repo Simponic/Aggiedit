@@ -3,6 +3,7 @@
 <%= if @live_action in [:new, :edit] do %>
   <.modal return_to={Routes.post_index_path(@socket, :index)}>
     <.live_component
+      current_user={@current_user}
       module={AggieditWeb.PostLive.FormComponent}
       id={@post.id || :new}
       title={@page_title}

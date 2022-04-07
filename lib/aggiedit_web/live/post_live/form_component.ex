@@ -3,17 +3,19 @@ defmodule AggieditWeb.PostLive.FormComponent do
 
   alias Aggiedit.Rooms
   alias Aggiedit.Rooms.Post
+  alias Aggiedit.Uploads
   alias Aggiedit.Uploads.Upload
   alias Aggiedit.Repo
 
   @impl true
-  def update(%{post: post} = assigns, socket) do
+  def update(%{current_user: current_user, post: post} = assigns, socket) do
     changeset = Rooms.change_post(post)
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign(:changeset, changeset)
+     |> assign(:current_user, current_user)
      |> assign(:uploaded_files, [])
      |> allow_upload(:upload, accept: ~w(.jpg .jpeg .png .gif), max_entries: 1)
     }
@@ -38,19 +40,20 @@ defmodule AggieditWeb.PostLive.FormComponent do
     consume_uploaded_entries(socket, :upload, fn data, upload -> 
       [extension | _] = MIME.extensions(upload.client_type)
       filename = "#{upload.uuid}-#{extension}"
-      upload = %Upload{
-        file: filename,
-        size: upload.client_size,
-        mime: upload.client_type
-      }
 
       dest = Path.join("priv/static/uploads", filename)
       File.cp!(data.path, dest)
 
-      Repo.preload(post, :upload)
+      {:ok, upload} = Uploads.create_upload(%{
+        file: filename,
+        size: upload.client_size,
+        mime: upload.client_type,
+      }, socket.assigns.current_user)
+
+      post
+      |> Repo.preload(:upload)
       |> Post.change_upload(upload)
-      |> Repo.update
-      IO.puts(inspect(upload))
+      |> Repo.update()
 
       {:ok, upload}
     end)
@@ -71,7 +74,7 @@ defmodule AggieditWeb.PostLive.FormComponent do
   end
 
   defp save_post(socket, :new, post_params) do
-    case Rooms.create_post(post_params, &save_upload(socket, &1)) do
+    case Rooms.create_post(post_params, socket.assigns.current_user, &save_upload(socket, &1)) do
       {:ok, _post} ->
         {:noreply,
          socket
