@@ -27,11 +27,13 @@
         </div>
       <% end %>
     <%= else %>
-      <div class="row">
-        <div class="column">
-          <img style="height:80px" src={Routes.static_path(@socket, "/uploads/#{@post.upload.file}")} />
+      <% if !is_nil(@post.upload) do %>
+        <div class="row">
+          <div class="column">
+            <img style="height:80px" src={Routes.static_path(@socket, "/uploads/#{@post.upload.file}")} />
+          </div>
         </div>
-      </div>
+      <% end %>
     <% end %>
   
     <div>
