@@ -39,7 +39,7 @@ defmodule AggieditWeb.PostLive.FormComponent do
   defp save_upload(socket, %Post{} = post) do
     consume_uploaded_entries(socket, :upload, fn data, upload -> 
       [extension | _] = MIME.extensions(upload.client_type)
-      filename = "#{upload.uuid}-#{extension}"
+      filename = "#{upload.uuid}.#{extension}"
 
       dest = Path.join("priv/static/uploads", filename)
       File.cp!(data.path, dest)

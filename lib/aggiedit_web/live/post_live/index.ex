@@ -22,7 +22,7 @@ defmodule AggieditWeb.PostLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Post")
-    |> assign(:post, Rooms.get_post!(id))
+    |> assign(:post, Rooms.get_post!(id) |> Repo.preload(:upload))
   end
 
   defp apply_action(socket, :new, _params) do
