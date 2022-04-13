@@ -24,7 +24,7 @@ defmodule AggieditWeb.PostLive.Show do
       |> assign(:page_title, page_title(socket.assigns.live_action))
       |> assign(:post, post)}
     else
-      {:noreply, socket |> put_flash(:error, "You don't have permission to do that.") |> redirect(to: Routes.post_show_path(socket, :index))}
+      {:noreply, socket |> put_flash(:error, "You don't have permission to do that.") |> redirect(to: Routes.post_show_path(socket, post))}
     end
   end
 

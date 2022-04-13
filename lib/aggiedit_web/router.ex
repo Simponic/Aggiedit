@@ -25,7 +25,7 @@ defmodule AggieditWeb.Router do
 
   scope "/", AggieditWeb do
     pipe_through [:browser, :require_authenticated_user]
-    live "/posts", PostLive.Index, :index
+    live "/posts/room/:id", PostLive.Index, :index
     live "/posts/new", PostLive.Index, :new
     live "/posts/:id/edit", PostLive.Index, :edit
 

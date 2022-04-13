@@ -112,17 +112,12 @@ defmodule Aggiedit.Rooms do
 
   alias Aggiedit.Rooms.Post
 
-  @doc """
-  Returns the list of posts.
-
-  ## Examples
-
-      iex> list_posts()
-      [%Post{}, ...]
-
-  """
   def list_posts do
     Repo.all(Post)
+  end
+
+  def posts_in_room(room_id) do
+    Repo.all((from p in Post, where: p.room_id == ^room_id, select: p))
   end
 
   @doc """
