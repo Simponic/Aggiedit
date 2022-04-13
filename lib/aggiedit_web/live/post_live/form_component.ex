@@ -4,7 +4,6 @@ defmodule AggieditWeb.PostLive.FormComponent do
   alias Aggiedit.Rooms
   alias Aggiedit.Rooms.Post
   alias Aggiedit.Uploads
-  alias Aggiedit.Uploads.Upload
   alias Aggiedit.Repo
 
   @impl true

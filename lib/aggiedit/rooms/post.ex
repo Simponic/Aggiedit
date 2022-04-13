@@ -1,7 +1,6 @@
 defmodule Aggiedit.Rooms.Post do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Aggiedit.Repo
 
   schema "posts" do
     field :body, :string

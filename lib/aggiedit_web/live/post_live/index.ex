@@ -1,23 +1,16 @@
 defmodule AggieditWeb.PostLive.Index do
   use AggieditWeb, :live_view
 
-  alias Aggiedit.Accounts.User
   alias Aggiedit.Roles
   alias Aggiedit.Rooms
-  alias Aggiedit.Rooms.{Post, Room}
+  alias Aggiedit.Rooms.Post
   alias Aggiedit.Repo
 
   @impl true
-  def mount(%{"room_id" => room_id} = params, session, socket) do
-    {:ok, socket} = AggieditWeb.PostLive.Helper.assign_socket_room_and_user_or_error(params, session, socket)
-#    if !is_nil(socket.assigns[:room]) do
-#      {:ok, assign(socket, %{:posts => socket.assigns.room |> Repo.preload(:posts) |> Map.get(:posts)})}
-#    else 
-#      {:ok, socket}
-#    end
+  def mount(%{"room_id" => _room_id} = params, session, socket) do
+    {:ok, socket} = assign_socket_room_and_user_or_error(params, session, socket)
     case socket.assigns do
-      %{:room => room} -> 
-        {:ok, assign(socket, %{:posts => room |> Repo.preload(:posts) |> Map.get(:posts)})}
+      %{:room => room} -> {:ok, assign(socket, %{:posts => room |> Repo.preload(:posts) |> Map.get(:posts)})}
       _ -> {:ok, socket}
     end
   end
@@ -38,7 +31,7 @@ defmodule AggieditWeb.PostLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :edit, %{"id" => id}=params) do
+  defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Post")
     |> assign(:post, Rooms.get_post!(id) |> Repo.preload(:upload))

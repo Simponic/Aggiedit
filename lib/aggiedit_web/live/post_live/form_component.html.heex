@@ -26,8 +26,8 @@
           </div>
         </div>
       <% end %>
-    <%= else %>
-      <% if !is_nil(@post.upload) do %>
+    <% else %>
+      <%= if !is_nil(@post.upload) do %>
         <div class="row">
           <div class="column">
             <img style="height:80px" src={Routes.static_path(@socket, "/uploads/#{@post.upload.file}")} />

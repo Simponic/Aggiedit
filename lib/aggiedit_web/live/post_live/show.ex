@@ -6,12 +6,12 @@ defmodule AggieditWeb.PostLive.Show do
   alias Aggiedit.Repo
 
   @impl true
-  def mount(%{"room_id" => room_id} = params, session, socket) do
-    AggieditWeb.PostLive.Helper.assign_socket_room_and_user_or_error(params, session, socket)
+  def mount(%{"room_id" => _room_id} = params, session, socket) do
+    assign_socket_room_and_user_or_error(params, session, socket)
   end
 
   @impl true
-  def handle_params(%{"id" => id}=params, _, socket) do
+  def handle_params(%{"id" => id}, _, socket) do
     post = Rooms.get_post!(id)
     |> Repo.preload(:upload)
     if Roles.guard?(socket.assigns.current_user, socket.assigns.live_action, post) do

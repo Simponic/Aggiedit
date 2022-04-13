@@ -5,9 +5,9 @@ defmodule Aggiedit.Accounts do
 
   import Ecto.Query, warn: false
   alias Aggiedit.Repo
+  alias Aggiedit.Rooms
 
   alias Aggiedit.Accounts.{User, UserToken, UserNotifier}
-  alias Aggiedit.Rooms
 
   ## Database getters
 
@@ -140,7 +140,7 @@ defmodule Aggiedit.Accounts do
 
     with {:ok, query} <- UserToken.verify_change_email_token_query(token, context),
          %UserToken{sent_to: email} <- Repo.one(query),
-         {:ok, _} <- Repo.transaction(user_email_multi(user, email, context)),
+         {:ok, %{:user => user}} <- Repo.transaction(user_email_multi(user, email, context)),
          {:ok, _user} <- set_user_room(user) do
       :ok
     else
