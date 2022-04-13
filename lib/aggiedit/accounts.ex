@@ -149,7 +149,6 @@ defmodule Aggiedit.Accounts do
   end
 
   def set_user_room(user) do
-    # TODO: Make posts by user in previous room inaccessible by user
     with domain <- Aggiedit.Utils.get_email_domain(user.email),
          {:ok, room} <- Rooms.create_or_find_room_with_domain(domain) do
       user
