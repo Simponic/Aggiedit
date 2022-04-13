@@ -25,12 +25,12 @@ defmodule AggieditWeb.Router do
 
   scope "/", AggieditWeb do
     pipe_through [:browser, :require_authenticated_user]
-    live "/posts/room/:id", PostLive.Index, :index
-    live "/posts/new", PostLive.Index, :new
-    live "/posts/:id/edit", PostLive.Index, :edit
+    live "/room/:room_id", PostLive.Index, :index
+    live "/room/:room_id/posts/new", PostLive.Index, :new
+    live "/room/:room_id/posts/:id/edit", PostLive.Index, :edit
 
-    live "/posts/:id", PostLive.Show, :show
-    live "/posts/:id/show/edit", PostLive.Show, :edit
+    live "/room/:room_id/posts/:id", PostLive.Show, :show
+    live "/room/:room_id/posts/:id/show/edit", PostLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.

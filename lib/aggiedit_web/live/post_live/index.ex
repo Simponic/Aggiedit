@@ -8,31 +8,27 @@ defmodule AggieditWeb.PostLive.Index do
   alias Aggiedit.Repo
 
   @impl true
-  def mount(%{"id" => room_id} = params, session, socket) do
-    socket = assign_socket_user(session, socket)
+  def mount(%{"room_id" => room_id} = params, session, socket) do
+    {:ok, socket} = AggieditWeb.PostLive.Helper.assign_socket_room_and_user_or_error(params, session, socket)
+#    if !is_nil(socket.assigns[:room]) do
+#      {:ok, assign(socket, %{:posts => socket.assigns.room |> Repo.preload(:posts) |> Map.get(:posts)})}
+#    else 
+#      {:ok, socket}
+#    end
     case socket.assigns do
-      %{:current_user => user} -> 
-        room = Rooms.get_room!(room_id)
-        case Roles.guard?(socket.assigns.current_user, socket.assigns.live_action, room) do
-          true -> {:ok, assign(socket, :posts, list_posts(room))}
-          _ -> {:ok, socket |> put_flash(:error, "You cannot view that room") |> redirect(to: Routes.page_path(socket, :index))}
-        end
-      _ -> {:ok, socket |> put_flash(:error, "You must log in to access this page.") |> redirect(to: Routes.user_session_path(socket, :new))}
+      %{:room => room} -> 
+        {:ok, assign(socket, %{:posts => room |> Repo.preload(:posts) |> Map.get(:posts)})}
+      _ -> {:ok, socket}
     end
-
   end
 
   @impl true
   def handle_params(%{"id" => id}=params, _url, socket) do
-    if socket.assigns.live_action != :index do
-      post = Rooms.get_post!(id)
-      if Roles.guard?(socket.assigns.current_user, socket.assigns.live_action, post) do
-        {:noreply, apply_action(socket, socket.assigns.live_action, params)}
-      else
-        {:noreply, socket |> put_flash(:error, "You do not have permission to edit this post.") |> redirect(to: Routes.post_index_path(socket, :index))}
-      end
+    post = Rooms.get_post!(id)
+    if Roles.guard?(socket.assigns.current_user, socket.assigns.live_action, post) do
+      {:noreply, apply_action(socket, socket.assigns.live_action, params)}
     else
-      {:noreply, socket}
+      {:noreply, socket |> put_flash(:error, "You do not have permission to edit this post.") |> redirect(to: Routes.post_index_path(socket, :index, socket.assigns.room))}
     end
   end
 
@@ -65,13 +61,9 @@ defmodule AggieditWeb.PostLive.Index do
     post = Rooms.get_post!(id)
     if Roles.guard?(socket.assigns.current_user, :delete, post) do
       Rooms.delete_post(post)
-      {:noreply, socket |> put_flash(:success, "Post deleted.") |> redirect(to: Routes.post_index_path(socket, :index))}
+      {:noreply, socket |> put_flash(:success, "Post deleted.") |> redirect(to: Routes.post_index_path(socket, :index, socket.assigns.room))}
     else
-      {:noreply, socket |> put_flash(:error, "You do not have permission to delete this post.") |> redirect(to: Routes.post_index_path(socket, :index))}
+      {:noreply, socket |> put_flash(:error, "You do not have permission to delete this post.") |> redirect(to: Routes.post_index_path(socket, :index, socket.assigns.room))}
     end
-  end
-
-  defp list_posts(%Room{id: room_id}) do
-    Rooms.posts_in_room(room_id)
   end
 end

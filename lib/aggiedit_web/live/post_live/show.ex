@@ -6,16 +6,12 @@ defmodule AggieditWeb.PostLive.Show do
   alias Aggiedit.Repo
 
   @impl true
-  def mount(_params, session, socket) do
-    socket = assign_socket_user(session, socket)
-    case socket.assigns do
-      %{:current_user => user} -> {:ok, socket}
-      _ -> {:ok, socket |> put_flash(:error, "You must log in to access this page.") |> redirect(to: Routes.user_session_path(socket, :new))}
-    end
+  def mount(%{"room_id" => room_id} = params, session, socket) do
+    AggieditWeb.PostLive.Helper.assign_socket_room_and_user_or_error(params, session, socket)
   end
 
   @impl true
-  def handle_params(%{"id" => id}, _, socket) do
+  def handle_params(%{"id" => id}=params, _, socket) do
     post = Rooms.get_post!(id)
     |> Repo.preload(:upload)
     if Roles.guard?(socket.assigns.current_user, socket.assigns.live_action, post) do
@@ -24,7 +20,7 @@ defmodule AggieditWeb.PostLive.Show do
       |> assign(:page_title, page_title(socket.assigns.live_action))
       |> assign(:post, post)}
     else
-      {:noreply, socket |> put_flash(:error, "You don't have permission to do that.") |> redirect(to: Routes.post_show_path(socket, post))}
+      {:noreply, socket |> put_flash(:error, "You don't have permission to do that.") |> redirect(to: Routes.post_show_path(socket, :show, socket.assigns.room, post))}
     end
   end
 

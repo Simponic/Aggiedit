@@ -14,9 +14,7 @@ defmodule AggieditWeb.PostLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)
-     |> assign(:current_user, current_user)
-     |> assign(:uploaded_files, [])
+     |> assign(%{changeset: changeset, current_user: current_user, uploaded_files: []})
      |> allow_upload(:upload, accept: ~w(.jpg .jpeg .png .gif), max_entries: 1)
     }
   end

@@ -1,7 +1,7 @@
 <h1>Show Post</h1>
 
 <%= if @live_action in [:edit] do %>
-  <.modal return_to={Routes.post_show_path(@socket, :show, @post)}>
+  <.modal return_to={Routes.post_show_path(@socket, :show, @room, @post)}>
     <.live_component
       module={AggieditWeb.PostLive.FormComponent}
       id={@post.id}
@@ -9,7 +9,7 @@
       title={@page_title}
       action={@live_action}
       post={@post}
-      return_to={Routes.post_show_path(@socket, :show, @post)}
+      return_to={Routes.post_show_path(@socket, :show, @room, @post)}
     />
   </.modal>
 <% end %>
@@ -28,5 +28,5 @@
 
 </ul>
 
-<span><%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit, @post), class: "button" %></span> |
-<span><%= live_redirect "Back", to: Routes.post_index_path(@socket, :index) %></span>
+<span><%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit, @room, @post), class: "button" %></span> |
+<span><%= live_redirect "Back", to: Routes.post_index_path(@socket, :index, @room) %></span>
