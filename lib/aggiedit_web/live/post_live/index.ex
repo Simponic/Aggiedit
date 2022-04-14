@@ -10,7 +10,9 @@ defmodule AggieditWeb.PostLive.Index do
   def mount(%{"room_id" => _room_id} = params, session, socket) do
     {:ok, socket} = assign_socket_room_and_user_or_error(params, session, socket)
     case socket.assigns do
-      %{:room => room} -> {:ok, assign(socket, %{:posts => room |> Repo.preload(posts: [:user, :upload]) |> Map.get(:posts)})}
+      %{:room => room} -> 
+        if connected?(socket), do: Rooms.subscribe(socket.assigns.room)
+        {:ok, assign(socket, %{:posts => room |> Repo.preload(posts: [:user, :upload]) |> Map.get(:posts)}), temporary_assigns: [posts: []]}
       _ -> {:ok, socket}
     end
   end
@@ -58,5 +60,12 @@ defmodule AggieditWeb.PostLive.Index do
     else
       {:noreply, socket |> put_flash(:error, "You do not have permission to delete this post.") |> redirect(to: Routes.post_index_path(socket, :index, socket.assigns.room))}
     end
+  end
+
+  @impl true
+  def handle_info({action, post}, socket) when action in [:post_created, :post_updated, :post_deleted] do
+    {:noreply, update(socket, :posts, fn posts -> 
+      [posts | post]
+    end)}
   end
 end

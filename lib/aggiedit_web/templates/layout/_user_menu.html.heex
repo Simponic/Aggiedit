@@ -1,6 +1,6 @@
 <%= if @current_user do %>
   <li class="nav-item active">
-    <%= link "Settings", to: Routes.user_settings_path(@conn, :edit), class: "nav-link" %>
+    <%= link "#{@current_user.username}/settings", to: Routes.user_settings_path(@conn, :edit), class: "nav-link" %>
   </li>
   <li class="nav-item active">
     <%= link "Log out", to: Routes.user_session_path(@conn, :delete), method: :delete, class: "nav-link" %>
