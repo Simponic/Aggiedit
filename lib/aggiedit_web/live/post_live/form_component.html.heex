@@ -9,35 +9,33 @@
     phx-change="validate"
     phx-submit="save">
   
-    <%= label f, :title %>
-    <%= textarea f, :title %>
-    <%= error_tag f, :title %>
+    <div class="form-group">
+      <%= label f, :title %>
+      <%= text_input f, :title, class: "form-control" %>
+      <%= error_tag f, :title %>
+    </div>
   
-    <%= label f, :body %>
-    <%= textarea f, :body %>
-    <%= error_tag f, :body %>
+    <div class="form-group mt-2">
+      <%= label f, :body %>
+      <%= textarea f, :body, class: "form-control" %>
+      <%= error_tag f, :body %>
+    </div>
 
-    <%= if !Ecto.assoc_loaded?(@post.upload) do %>
-      <%= live_file_input @uploads.upload %>
-      <%= for upload <- @uploads.upload.entries do %>
-        <div class="row">
-          <div class="column">
-            <%= live_img_preview upload, height: 80 %>
+    <div class="form-group mt-2">
+      <%= if !Ecto.assoc_loaded?(@post.upload) do %>
+        <%= live_file_input @uploads.upload %>
+        <%= for upload <- @uploads.upload.entries do %>
+          <div class="row">
+            <div class="column">
+              <%= live_img_preview upload, height: 80 %>
+            </div>
           </div>
-        </div>
+        <% end %>
       <% end %>
-    <% else %>
-      <%= if !is_nil(@post.upload) do %>
-        <div class="row">
-          <div class="column">
-            <img style="height:80px" src={Routes.static_path(@socket, "/uploads/#{@post.upload.file}")} />
-          </div>
-        </div>
-      <% end %>
-    <% end %>
+    </div>
   
-    <div>
-      <%= submit "Save", phx_disable_with: "Saving..." %>
+    <div class="mt-2">
+      <%= submit "Save", phx_disable_with: "Saving...", class: "btn btn-primary" %>
     </div>
   </.form>
 </div>

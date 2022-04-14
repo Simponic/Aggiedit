@@ -1,12 +1,10 @@
-/* This file is for your main application CSS */
-@import "./phoenix.css";
-
 /* Alerts and form errors used by phx.new */
 .alert {
   padding: 15px;
   margin-bottom: 20px;
   border: 1px solid transparent;
   border-radius: 4px;
+  cursor: pointer;
 }
 .alert-info {
   color: #31708f;
@@ -63,11 +61,10 @@
 }
 
 .phx-modal-content {
-  background-color: #fefefe;
   margin: 15vh auto;
   padding: 20px;
-  border: 1px solid #888;
   width: 80%;
+  max-width: 600px;
 }
 
 .phx-modal-close {
@@ -117,4 +114,10 @@
 @keyframes fade-out-keys{
   0% { opacity: 1; }
   100% { opacity: 0; }
+}
+
+
+.thumbnail {
+  max-width: 100px;
+  max-height: 100px;
 }

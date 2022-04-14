@@ -7,23 +7,29 @@
     </div>
   <% end %>
 
-  <%= label f, :email %>
-  <%= email_input f, :email, required: true %>
-  <%= error_tag f, :email %>
+  <div class="form-group mt-2">
+    <%= label f, :email %>
+    <%= email_input f, :email, required: true, class: "form-control" %>
+    <%= error_tag f, :email %>
+  </div>
 
-  <%= label f, :username %>
-  <%= text_input f, :username, required: true %>
-  <%= error_tag f, :username %>
+  <div class="form-group mt-2">
+    <%= label f, :username %>
+    <%= text_input f, :username, required: true, class: "form-control" %>
+    <%= error_tag f, :username %>
+  </div>
 
-  <%= label f, :password %>
-  <%= password_input f, :password, required: true %>
-  <%= error_tag f, :password %>
+  <div class="form-group mt-2">
+    <%= label f, :password %>
+    <%= password_input f, :password, required: true, class: "form-control" %>
+    <%= error_tag f, :password %>
+  </div>
 
-  <div>
-    <%= submit "Register" %>
+  <div class="mt-2">
+    <%= submit "Register", class: "btn btn-primary" %>
   </div>
 </.form>
-
+<hr>
 <p>
   <%= link "Log in", to: Routes.user_session_path(@conn, :new) %> |
   <%= link "Forgot your password?", to: Routes.user_reset_password_path(@conn, :new) %>

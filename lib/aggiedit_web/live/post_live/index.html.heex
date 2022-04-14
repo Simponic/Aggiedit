@@ -1,4 +1,4 @@
-<h1>Listing Posts</h1>
+<h1>@<%= @room.domain %></h1>
 
 <%= if @live_action in [:new, :edit] do %>
   <.modal return_to={Routes.post_index_path(@socket, :index, @room)}>
@@ -14,29 +14,40 @@
   </.modal>
 <% end %>
 
-<table>
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Body</th>
-
-      <th></th>
-    </tr>
-  </thead>
-  <tbody id="posts">
-    <%= for post <- @posts do %>
-      <tr id={"post-#{post.id}"}>
-        <td><%= post.title %></td>
-        <td><%= post.body %></td>
-
-        <td>
-          <span><%= live_redirect "Show", to: Routes.post_show_path(@socket, :show, @room, post) %></span>
-          <span><%= live_patch "Edit", to: Routes.post_index_path(@socket, :edit, @room, post) %></span>
-          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: post.id, data: [confirm: "Are you sure?"] %></span>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
 <span><%= live_patch "New Post", to: Routes.post_index_path(@socket, :new, @room) %></span>
+<%= for post <- @posts do %>
+  <div class="card d-flex flex-row align-items-center p-2 m-2 shadow">
+    <%= if !is_nil(post.upload) do %>
+      <%= live_redirect to: Routes.post_show_path(@socket, :show, @room, post) do %>
+        <div class="card-image d-flex justify-content-center" style="width: 100px">
+          <img class="fluid-img thumbnail" src={Routes.static_path(@socket, "/uploads/#{post.upload.file}")} />
+        </div>
+      <% end %>
+    <% end %>
+    <div class="card-body">
+      <%= live_redirect to: Routes.post_show_path(@socket, :show, @room, post) do %>
+        <h4 class="card-title"><%= post.title %></h4>
+      <% end %>
+      <h6 class="card-subtitle mb-2"><span class="text-muted">aggie/</span><%= post.user.username %></h6>
+      <p class="card-text"><%= post.body %></p>
+
+      <%= if Aggiedit.Roles.guard?(@current_user, :edit, post) && Aggiedit.Roles.guard?(@current_user, :edit, post) do %>
+        <span><%= live_patch "Edit", to: Routes.post_index_path(@socket, :edit, @room, post) %></span>
+        <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: post.id %></span>
+      <% end %>
+    </div>
+  </div>
+<!--
+  <div class=>
+  </div>
+  <tr id={"post-#{post.id}"}>
+    <td><%= post.title %></td>
+    <td><%= post.body %></td>
+
+    <td>
+      <span></span>
+    </td>
+  </tr>
+  -->
+<% end %>
+

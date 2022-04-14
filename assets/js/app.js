@@ -42,3 +42,6 @@ liveSocket.connect()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
+
+// Hack to remove alerts on click
+Array.from(window.document.getElementsByClassName('alert')).forEach((x) => x.addEventListener('click', () => x.style.display = "none"))

@@ -10,7 +10,7 @@ defmodule AggieditWeb.PostLive.Index do
   def mount(%{"room_id" => _room_id} = params, session, socket) do
     {:ok, socket} = assign_socket_room_and_user_or_error(params, session, socket)
     case socket.assigns do
-      %{:room => room} -> {:ok, assign(socket, %{:posts => room |> Repo.preload(:posts) |> Map.get(:posts)})}
+      %{:room => room} -> {:ok, assign(socket, %{:posts => room |> Repo.preload(posts: [:user, :upload]) |> Map.get(:posts)})}
       _ -> {:ok, socket}
     end
   end

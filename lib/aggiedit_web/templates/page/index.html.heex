@@ -1,41 +1,26 @@
-<section class="phx-hero">
-  <h1><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h1>
-  <p>Peace of mind from prototype to production</p>
-</section>
-
-<section class="row">
-  <article class="column">
-    <h2>Resources</h2>
-    <ul>
-      <li>
-        <a href="https://hexdocs.pm/phoenix/overview.html">Guides &amp; Docs</a>
-      </li>
-      <li>
-        <a href="https://github.com/phoenixframework/phoenix">Source</a>
-      </li>
-      <li>
-        <a href="https://github.com/phoenixframework/phoenix/blob/v1.6/CHANGELOG.md">v1.6 Changelog</a>
-      </li>
-    </ul>
-  </article>
-  <article class="column">
-    <h2>Help</h2>
-    <ul>
-      <li>
-        <a href="https://elixirforum.com/c/phoenix-forum">Forum</a>
-      </li>
-      <li>
-        <a href="https://web.libera.chat/#elixir">#elixir on Libera Chat (IRC)</a>
-      </li>
-      <li>
-        <a href="https://twitter.com/elixirphoenix">Twitter @elixirphoenix</a>
-      </li>
-      <li>
-        <a href="https://elixir-slackin.herokuapp.com/">Elixir on Slack</a>
-      </li>
-      <li>
-        <a href="https://discord.gg/elixir">Elixir on Discord</a>
-      </li>
-    </ul>
-  </article>
-</section>
+<div>
+  <h1>
+    Welcome to AggiEdit!
+  </h1>
+</div>
+<div>
+  <h3>
+  How does it work?
+  </h3>
+  <p>
+  AggiEdit is a Reddit clone, but "sub-aggies" are only available to other users that share the same domain name in the email as yourself.
+  For example, if you sign up with your email address "joe@mailinator.com" you are assigned to the sub-aggie "mailinator.com".
+  <br>
+  In a sub-aggie, you can create posts with a title, a body, and an attachment. Posts are visible to everyone in your sub-aggie, and a realtime
+  chat-room is created for each post in the sub-aggie to discuss that post.
+  </p>
+  <%= if !@current_user do %>
+  <p>
+    Get started by <%= link "registering", to: Routes.user_registration_path(@conn, :new) %> to be able to view posts in your sub-aggie!
+  </p>
+  <% else %>
+  <p>
+    You are signed in! <%= link "Visit your sub-aggie!", to: "/room/#{@current_user.room_id}" %>
+  </p>
+  <% end %>
+</div>
