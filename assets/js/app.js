@@ -45,3 +45,7 @@ window.liveSocket = liveSocket
 
 // Hack to remove alerts on click
 Array.from(window.document.getElementsByClassName('alert')).forEach((x) => x.addEventListener('click', () => x.style.display = "none"))
+
+import RoomChat from "./chat"
+window.RoomChat = RoomChat;
+window.userSocket = new Socket("/socket", {params: {_csrf_token: csrfToken}})

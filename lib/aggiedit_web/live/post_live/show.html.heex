@@ -30,3 +30,8 @@
 
 <span><%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit, @room, @post), class: "button" %></span> |
 <span><%= live_redirect "Back", to: Routes.post_index_path(@socket, :index, @room) %></span>
+
+<script>
+  window.userSocket.connect();
+  window.RoomChat.init(window.userSocket, <%= @post.id %>)
+</script>
