@@ -6,8 +6,10 @@ defmodule Aggiedit.Rooms do
   import Ecto.Query, warn: false
   alias Aggiedit.Repo
 
-  alias Aggiedit.Accounts
+  alias Aggiedit.Accounts.User
   alias Aggiedit.Rooms.Room
+
+  alias Aggiedit.Post.{Vote, Comment}
 
   alias Phoenix.PubSub
 
@@ -89,6 +91,23 @@ defmodule Aggiedit.Rooms do
 
   def change_post(%Post{} = post, attrs \\ %{}) do
     Post.changeset(post, attrs)
+  end
+
+  def vote_count(post) do
+    votes = post
+    |> Repo.preload(:votes)
+    |> Map.get(:votes)
+    |> Enum.map(fn vote -> if vote.is_up, do: 1, else: -1 end)
+    |> Enum.sum()
+  end
+
+  def vote_post(%Post{} = post, %User{} = user, direction) do
+    is_up = direction == "upvote"
+    vote = %Vote{is_up: is_up, user: user, post: post}
+    |> Repo.insert(on_conflict: [set: [is_up: is_up]], conflict_target: [:user_id, :post_id])
+    post = change_post(post, %{score: vote_count(post)})
+    |> Repo.update()
+    broadcast_post_over_room(post, :post_voted)
   end
 
   defp broadcast_post_over_room({:error, _reason}=error, _event), do: error

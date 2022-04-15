@@ -18,13 +18,29 @@
 <div id="posts" phx-update="prepend">
   <%= for post <- @posts do %>
     <div id={"post-#{post.id}"} class="card d-flex flex-row align-items-center p-2 m-2 shadow">
-      <%= if !is_nil(post.upload) do %>
-        <%= live_redirect to: Routes.post_show_path(@socket, :show, @room, post) do %>
-          <div class="card-image d-flex justify-content-center" style="width: 100px">
+      <div class="d-flex flex-column m-2">
+        <%= 
+          has_vote = Map.has_key?(@votes, post.id)
+          is_upvote = has_vote && @votes[post.id].is_up
+          ""
+        %>
+        <div class="d-flex">
+          <span><%= link "", to: "#", phx_click: "upvote", phx_value_id: post.id, class: "bi bi-arrow-up-circle#{if has_vote && is_upvote, do: "-fill", else: ""}" %></span>
+        </div>
+        <div class="d-flex">
+          <%= post.score %>
+        </div>
+        <div class="d-flex">
+          <span><%= link "", to: "#", phx_click: "downvote", phx_value_id: post.id, class: "bi bi-arrow-down-circle#{if has_vote && !is_upvote, do: "-fill", else: ""}" %></span>
+        </div>
+      </div>
+      <div class="m-2 card-image d-flex justify-content-center" style="width: 100px">
+        <%= if !is_nil(post.upload) do %>
+          <%= live_redirect to: Routes.post_show_path(@socket, :show, @room, post) do %>
             <img class="fluid-img thumbnail" src={Routes.static_path(@socket, "/uploads/#{post.upload.file}")} />
-          </div>
+          <% end %>
         <% end %>
-      <% end %>
+      </div>
       <div class="card-body">
         <%= live_redirect to: Routes.post_show_path(@socket, :show, @room, post) do %>
           <h4 class="card-title"><%= post.title %></h4>

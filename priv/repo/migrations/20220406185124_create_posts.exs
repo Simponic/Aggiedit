@@ -5,6 +5,7 @@ defmodule Aggiedit.Repo.Migrations.CreatePosts do
     create table(:posts) do
       add :title, :text
       add :body, :text
+      add :score, :integer, default: 0
       add :user_id, references(:users, on_delete: :nothing)
       add :upload_id, references(:uploads, on_delete: :nothing)
       add :room_id, references(:rooms, on_delete: :nothing)

@@ -14,6 +14,8 @@ defmodule Aggiedit.Accounts.User do
 
     belongs_to :room, Room, on_replace: :update
     has_many :posts, Aggiedit.Rooms.Post
+    has_many :votes, Aggiedit.Post.Vote
+    has_many :comments, Aggiedit.Post.Comment
 
     timestamps()
   end

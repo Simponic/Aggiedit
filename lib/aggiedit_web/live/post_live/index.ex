@@ -12,7 +12,14 @@ defmodule AggieditWeb.PostLive.Index do
     case socket.assigns do
       %{:room => room} -> 
         if connected?(socket), do: Rooms.subscribe(socket.assigns.room)
-        {:ok, assign(socket, %{:posts => room |> Repo.preload(posts: [:user, :upload]) |> Map.get(:posts)}), temporary_assigns: [posts: []]}
+        posts = room 
+        |> Repo.preload(posts: [:user, :upload])
+        |> Map.get(:posts)
+        votes = socket.assigns.current_user
+        |> Repo.preload(:votes)
+        |> Map.get(:votes)
+        |> Enum.reduce(%{}, fn v, a -> Map.put(a, v.post_id, v) end)
+        {:ok, assign(socket, %{:posts => posts, :votes => votes}), temporary_assigns: [posts: []]}
       _ -> {:ok, socket}
     end
   end
@@ -50,6 +57,16 @@ defmodule AggieditWeb.PostLive.Index do
     |> assign(:post, nil)
   end
 
+  def handle_event(vote, %{"id" => id}, socket) when vote in ["upvote", "downvote"] do
+    post = Rooms.get_post!(id)
+    if Roles.guard?(socket.assigns.current_user, :vote, post) do
+      Rooms.vote_post(post, socket.assigns.current_user, vote)
+      {:noreply, socket}
+    else
+      {:noreply, socket |> put_flash(:error, "You don't have permission to do that.") |> redirect(to: Routes.post_show_path(socket, :show, socket.assigns.room, post))}
+    end
+  end
+
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     post = Rooms.get_post!(id)
@@ -62,7 +79,7 @@ defmodule AggieditWeb.PostLive.Index do
   end
 
   @impl true
-  def handle_info({action, post}, socket) when action in [:post_created, :post_updated, :post_deleted] do
+  def handle_info({action, post}, socket) when action in [:post_created, :post_updated, :post_deleted, :post_voted] do
     {:noreply, update(socket, :posts, fn posts -> 
       [posts | post]
     end)}
