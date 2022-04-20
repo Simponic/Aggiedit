@@ -1,4 +1,37 @@
-<h1>Show Post</h1>
+
+<div class="d-flex justify-content-center">
+  <div class="container">
+    <div>
+      <h1><%= @post.title %></h1>
+    </div>
+    <div>
+      <%= if Ecto.assoc_loaded?(@post.upload) && !is_nil(@post.upload) do %>
+        <img src={Routes.static_path(@socket, "/uploads/#{@post.upload.file}")} class="img-fluid"/>
+      <% end %>
+    </div>
+    <div class="post-body">
+      <%= @post.body %>
+    </div>
+    <%= if Aggiedit.Roles.guard?(@current_user, :edit, @post) do %>
+      <span><%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit, @room, @post), class: "button" %></span> |
+    <% end %>
+    <span><%= live_redirect "Back", to: Routes.post_index_path(@socket, :index, @room) %></span>
+  </div>
+</div>
+
+<!-- chat container from https://www.bootdey.com/snippets/view/card-chat-list#html -->
+<div class="container content mt-2">
+  <div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+      <div class="chat-card">
+        <div class="chat-card-body">
+          <ul class="chat-list" id="chat" phx-update="ignore">
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <%= if @live_action in [:edit] do %>
   <.modal return_to={Routes.post_show_path(@socket, :show, @room, @post)}>
@@ -14,24 +47,43 @@
   </.modal>
 <% end %>
 
-<ul>
-
-  <li>
-    <strong>Title:</strong>
-    <%= @post.title %>
-  </li>
-
-  <li>
-    <strong>Body:</strong>
-    <%= @post.body %>
-  </li>
-
-</ul>
-
-<span><%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit, @room, @post), class: "button" %></span> |
-<span><%= live_redirect "Back", to: Routes.post_index_path(@socket, :index, @room) %></span>
-
 <script>
-  window.userSocket.connect();
-  window.RoomChat.init(window.userSocket, <%= @post.id %>)
+  const scrollToBottom = (element) => {
+    element.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  };
+
+  const appendComment = ({user, body, id, inserted_at}, element) => {
+    const messageElement = document.createElement("div");
+    messageElement.innerHTML = `
+      <li class="in" id=${id}>
+        <div class="chat-card-body">
+          <div class="chat-message">
+            <h5>${user}</h5>
+            <p>${body}</p>
+          </div>
+        </div>
+      </li>
+    `;
+    element.appendChild(messageElement);
+    scrollToBottom(element);
+  };
+
+
+  window.addEventListener('phx:initial-post', (e) => {
+    const chatWindow = document.getElementById("chat");
+    window.userSocket.connect();
+    let channel = window.RoomChat.connect(window.userSocket, e.detail.id);
+
+    channel.on('shout', (comment) => {
+      appendComment(comment, chatWindow);
+    });
+
+    channel.on('initial-comments', ({comments}) => {
+      comments.forEach((comment) => {
+        appendComment(comment, chatWindow);
+      });
+      scrollToBottom(chatWindow);
+    });
+    channel.push("send", {body: "Hello!"});
+  });
 </script>

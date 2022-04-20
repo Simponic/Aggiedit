@@ -17,4 +17,8 @@ defmodule Aggiedit.Post.Comment do
     |> cast(attrs, [:comment])
     |> validate_required([:comment])
   end
+
+  def serialize(c) do
+    %{"body" => c.comment, "user" => c.user.username, "id" => c.id, "inserted_at" => c.inserted_at}
+  end
 end

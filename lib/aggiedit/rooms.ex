@@ -94,7 +94,7 @@ defmodule Aggiedit.Rooms do
   end
 
   def vote_count(post) do
-    votes = post
+    post
     |> Repo.preload(:votes)
     |> Map.get(:votes)
     |> Enum.map(fn vote -> if vote.is_up, do: 1, else: -1 end)
@@ -105,9 +105,15 @@ defmodule Aggiedit.Rooms do
     is_up = direction == "upvote"
     vote = %Vote{is_up: is_up, user: user, post: post}
     |> Repo.insert(on_conflict: [set: [is_up: is_up]], conflict_target: [:user_id, :post_id])
+    
     post = change_post(post, %{score: vote_count(post)})
     |> Repo.update()
+
     broadcast_post_over_room(post, :post_voted)
+  end
+
+  def comment_post(%Post{} = post, %User{} = user, comment) do
+    Repo.insert(%Comment{comment: comment, user: user, post: post})
   end
 
   defp broadcast_post_over_room({:error, _reason}=error, _event), do: error

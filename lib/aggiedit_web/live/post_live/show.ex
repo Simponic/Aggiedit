@@ -15,10 +15,10 @@ defmodule AggieditWeb.PostLive.Show do
     post = Rooms.get_post!(id)
     |> Repo.preload(:upload)
     if Roles.guard?(socket.assigns.current_user, socket.assigns.live_action, post) do
-      {:noreply,
-      socket
+      socket = (if socket.assigns.live_action == :show, do: push_event(socket, "initial-post", %{:id => post.id}), else: socket)
       |> assign(:page_title, page_title(socket.assigns.live_action))
-      |> assign(:post, post)}
+      |> assign(:post, post)
+      {:noreply, socket}
     else
       {:noreply, socket |> put_flash(:error, "You don't have permission to do that.") |> redirect(to: Routes.post_show_path(socket, :show, socket.assigns.room, post))}
     end
