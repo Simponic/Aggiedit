@@ -22,14 +22,15 @@
 <!-- chat container from https://www.bootdey.com/snippets/view/card-chat-list#html -->
 <div class="container content mt-2">
   <div class="row">
-    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-      <div class="chat-card">
-        <div class="chat-card-body">
-          <ul class="chat-list" id="chat" phx-update="ignore">
-          </ul>
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+        	<div class="card">
+        		<div class="card-header">Chat</div>
+        		<div class="card-body chat-container">
+        			<ul class="chat-list" id="chat">
+        			</ul>
+        		</div>
+        	</div>
         </div>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -52,11 +53,11 @@
     element.scrollIntoView({ behavior: 'smooth', block: 'end' });
   };
 
-  const appendComment = ({user, body, id, inserted_at}, element) => {
+  const appendComment = ({user, body, id, user_id, inserted_at}, element) => {
     const messageElement = document.createElement("div");
     messageElement.innerHTML = `
-      <li class="in" id=${id}>
-        <div class="chat-card-body">
+      <li class="${user_id == <%= @current_user.id %> ? 'out' : 'in'}" id=${id}>
+        <div class="chat-body">
           <div class="chat-message">
             <h5>${user}</h5>
             <p>${body}</p>
@@ -69,10 +70,11 @@
   };
 
 
+  let channel;
   window.addEventListener('phx:initial-post', (e) => {
     const chatWindow = document.getElementById("chat");
     window.userSocket.connect();
-    let channel = window.RoomChat.connect(window.userSocket, e.detail.id);
+    channel = window.RoomChat.connect(window.userSocket, e.detail.id);
 
     channel.on('shout', (comment) => {
       appendComment(comment, chatWindow);

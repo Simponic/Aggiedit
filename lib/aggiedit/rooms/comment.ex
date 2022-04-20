@@ -19,6 +19,6 @@ defmodule Aggiedit.Post.Comment do
   end
 
   def serialize(c) do
-    %{"body" => c.comment, "user" => c.user.username, "id" => c.id, "inserted_at" => c.inserted_at}
+    %{"body" => c.comment, "user" => c.user.username, "user_id" => c.user_id, "id" => c.id, "inserted_at" => c.inserted_at}
   end
 end

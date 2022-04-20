@@ -128,15 +128,33 @@
 
 
 /* Chat css from: https://www.bootdey.com/snippets/view/card-chat-list#html */
+.chat-container {
+  height: 300px;
+  overflow-y: scroll;
+}
+
 .chat-list {
   padding: 0;
   font-size: .8rem;
+  padding-bottom: 12px;
 }
 
 .chat-list li {
   margin-bottom: 10px;
   overflow: auto;
   color: #ffffff;
+}
+
+.chat-list .chat-img {
+  float: left;
+  width: 48px;
+}
+
+.chat-list .chat-img img {
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
+  border-radius: 50px;
+  width: 100%;
 }
 
 .chat-list .chat-message {
@@ -170,7 +188,7 @@
   padding: 0;
 }
 
-.chat-list .chat-card-body {
+.chat-list .chat-body {
   margin-left: 20px;
   float: left;
   width: 70%;
@@ -202,17 +220,12 @@
   border-left: 20px solid #fc6d4c;
 }
 
-.chat-card {
-  overflow-y: scroll;
-  max-height: 300px;
-}
-
-.chat-card .card-header:first-child {
+.card .card-header:first-child {
   -webkit-border-radius: 0.3rem 0.3rem 0 0;
   -moz-border-radius: 0.3rem 0.3rem 0 0;
   border-radius: 0.3rem 0.3rem 0 0;
 }
-.chat-card .card-header {
+.card .card-header {
   background: #17202b;
   border: 0;
   font-size: 1rem;
@@ -220,4 +233,8 @@
   position: relative;
   font-weight: 600;
   color: #ffffff;
+}
+
+.content{
+  margin-top:40px;    
 }
