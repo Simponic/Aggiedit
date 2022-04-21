@@ -24,11 +24,12 @@ defmodule AggieditWeb.PostChannel do
     |> Enum.map(fn c -> Aggiedit.Post.Comment.serialize(c) end)
     push(socket, "initial-comments", %{:comments => comments})
     
+    broadcast!(socket, "join", %{user: socket.assigns.current_user.username})
     {:noreply, socket}
   end
 
   @impl true
-  def handle_in("send", %{"body" => comment}=body, socket) do
+  def handle_in("send", %{"body" => comment}, socket) do
     {:ok, comment} = Rooms.comment_post(socket.assigns.post, socket.assigns.current_user, comment)
     broadcast!(socket, "shout", Aggiedit.Post.Comment.serialize(comment))
     {:reply, :ok, socket}

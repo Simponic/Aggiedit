@@ -39,7 +39,9 @@ defmodule AggieditWeb.PostLive.FormComponent do
       filename = "#{upload.uuid}.#{extension}"
 
       dest = Path.join("priv/static/uploads", filename)
-      File.cp!(data.path, dest)
+      with :ok <- File.mkdir_p(Path.dirname(dest)) do
+        File.cp!(data.path, dest)
+      end
 
       {:ok, upload} = Uploads.create_upload(%{
         file: filename,
