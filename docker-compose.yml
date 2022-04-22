@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  prod:
+    build: ./
+    env_file:
+      - .env
+    expose:
+      - 4000
+    depends_on:
+      - 'db'
+    volumes:
+      - ${USER_UPLOADS}/uploads:/app/bin/priv/static/uploads
+    depends_on:
+      - db
+  nginx:
+    build: ./nginx
+    ports:
+      - "8081:80"
+    volumes:
+      - ${USER_UPLOADS}:/uploads
+    depends_on:
+      - prod
+  db:
+    image: 'postgres:14'
+    env_file:
+      - .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
