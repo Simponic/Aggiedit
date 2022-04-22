@@ -13,10 +13,6 @@ if System.get_env("PHX_SERVER") && System.get_env("RELEASE_NAME") do
 end
 
 if config_env() == :prod do
-  config :aggiedit, Aggiedit.Mailer,
-    adapter: Swoosh.Adapters.Sendgrid,
-    api_key: System.get_env("SENDGRID_KEY")
-
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """
