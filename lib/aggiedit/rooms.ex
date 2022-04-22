@@ -103,7 +103,7 @@ defmodule Aggiedit.Rooms do
 
   def vote_post(%Post{} = post, %User{} = user, direction) do
     is_up = direction == "upvote"
-    vote = %Vote{is_up: is_up, user: user, post: post}
+    %Vote{is_up: is_up, user: user, post: post}
     |> Repo.insert(on_conflict: [set: [is_up: is_up]], conflict_target: [:user_id, :post_id])
     
     post = change_post(post, %{score: vote_count(post)})
