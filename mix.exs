@@ -51,6 +51,7 @@ defmodule Aggiedit.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:ecto_enum, "~> 1.4"},
+      {:gen_smtp, "~> 1.2"},
     ]
   end
 
