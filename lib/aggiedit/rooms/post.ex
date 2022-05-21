@@ -21,7 +21,7 @@ defmodule Aggiedit.Rooms.Post do
   def changeset(post, attrs) do
     post
     |> cast(attrs, [:title, :body, :score])
-    |> validate_required([:title, :body])
+    |> validate_required([:title])
   end
 
   def change_user(post, user) do

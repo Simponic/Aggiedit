@@ -27,10 +27,9 @@
 .alert:empty {
   display: none;
 }
-.invalid-feedback {
+.error-feedback {
   color: #a94442;
   display: block;
-  margin: -1rem 0 2rem;
 }
 
 /* LiveView specific classes for your customization */
